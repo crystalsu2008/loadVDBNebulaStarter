@@ -34,8 +34,9 @@ aiVolumeNode = cmds.createNode('aiVolume')
 cmds.setAttr(aiVolumeNode + '.filename', full_path, type="string")
 cmds.setAttr(aiVolumeNode + '.grids', "Cd density", type="string")
 
-'''
+
 # 创建一个 aiStandardVolume 材质节点
+'''
 aiStandardVolumeNode = cmds.shadingNode('aiStandardVolume', asShader=True)
 
 # 连接 aiVolume 节点和 aiStandardVolume 节点
