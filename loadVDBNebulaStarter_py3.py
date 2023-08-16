@@ -97,8 +97,7 @@ def vns_import_proxy(**kwargs):
         transformNode = cmds.listRelatives(obj, parent=True)[0]
         transformNode = cmds.rename(transformNode, nebulaProxyName)
         transformNodes.append(transformNode)
-
-    cmds.parent(transformNodes[-1], kwargs['nebula_grp'])
+        cmds.parent(transformNode, kwargs['nebula_grp'])
 
     # 检查场景中是否存在名为 "nebula_proxy" 的显示层
     if not cmds.objExists("nebula_proxy"):
@@ -109,6 +108,7 @@ def vns_import_proxy(**kwargs):
 
     # 将 nebula proxy 加入名为 "nebula_proxy" 的显示层
     cmds.editDisplayLayerMembers("nebula_proxy", transformNodes[-1])
+    return transformNodes
 
 def vns_create_nebula_volume(**kwargs):
     nebula_name = kwargs['nebula_name']
@@ -197,7 +197,7 @@ def vns_get_nebula_element(nebulaGrp, suffix):
 
         # 检查 transform 结点名称是否以给定后缀结尾
         if transformNode.endswith(suffix):
-            result.append(transformNode)
+            result.append((obj, transformNode))
 
     return result
 
@@ -278,8 +278,8 @@ def vns_get_param_from_selected(*args):
         cmds.warning("Please select a group")
     else:
         # 获取组中的 nebula vdb 物体
-        vdb = vns_get_nebula_element(selectedGroup, "vdb")[0]
-        fog = vns_get_nebula_element(selectedGroup, "fog")[0]
+        vdb, vdbtrans = vns_get_nebula_element(selectedGroup, "vdb")[0]
+        fog, fogtrans = vns_get_nebula_element(selectedGroup, "fog")[0]
 
     filePath = cmds.getAttr(vdb + ".filename")
     info = vns_getFileInfo(filePath)
@@ -310,9 +310,9 @@ def vns_replace_selected_nebula(**kwargs):
     else:
         # 获取组中的 nebula vdb 物体
         kwargs['nebula_grp'] = selectedGroup[0]
-        vdb = vns_get_nebula_element(selectedGroup, "vdb")[0]
-        fog = vns_get_nebula_element(selectedGroup, "fog")[0]
-        proxy = vns_get_nebula_element(selectedGroup, "proxy")[0]
+        vdb, vdbtrans = vns_get_nebula_element(selectedGroup, "vdb")[0]
+        fog, fogtrans = vns_get_nebula_element(selectedGroup, "fog")[0]
+        proxy, proxytrans = vns_get_nebula_element(selectedGroup, "proxy")[0]
     
     kwargs['type'] = 'vol'
     full_path = '$NEBULAPATH/'+vns_get_nebula_path(**kwargs)
@@ -329,8 +329,10 @@ def vns_replace_selected_nebula(**kwargs):
     cmds.sets(fog, edit=True, forceElement=shadingGroups[0])
     
     # 导入 proxy 物体
-    cmds.delete(proxy)
-    vns_import_proxy(**kwargs)
+    matrix = cmds.xform(proxytrans, query=True, matrix=True, worldSpace=True)
+    cmds.delete(proxytrans)
+    proxy_trans = vns_import_proxy(**kwargs)
+    cmds.xform(proxy_trans, matrix=matrix, worldSpace=True)
 
 def vns_create_nebula(*args):
     info = vns_get_param_from_ctrls()
