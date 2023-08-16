@@ -54,26 +54,26 @@ def vns_get_nebula_path(**kwargs):
     extension = u"vdb"
 
     sidx="%03d" % idx
-    nebuladir = f"{name}_{sidx}_{colortype}"
-    nebulaname = f"{name}_{sidx}_{colortype}_{res}_Res.{extension}"
+    nebuladir = "{}_{}_{}".format(name, sidx, colortype)
+    nebulaname = "{}_{}_{}_Res.{}".format(name, sidx, colortype, res, extension)
     if typ == u'fog':
-        nebuladir = f"{name}_{sidx}_orange_blue"
-        nebulaname = f"{name}_{sidx}_orange_blue_Fog.{extension}"
+        nebuladir = "{}_{}_orange_blue".format(name, sidx)
+        nebulaname = "{}_{}_orange_blue_Fog.{}".format(name, sidx, extension)
     elif typ == u'proxy':
-        nebulaname = f"{name}_{sidx}_{colortype}_proxy.obj"
+        nebulaname = "{}_{}_{}_proxy.obj".format(name, sidx, colortype)
     full_path = os.path.join(nebuladir, nebulaname)
     full_path = full_path.replace(u'\\', u'/')
     return full_path
 
 def vns_import_proxy(**kwargs):
     nebula_name = kwargs[u'nebula_name']
-    sidx=f"{kwargs['index']:03d}"
-    nebulaProxyName = f"{nebula_name}_{sidx}"
+    sidx = "{:03d}".format(kwargs['index'])
+    nebulaProxyName = "{}_{}".format(nebula_name, sidx)
     # 检查新名称是否已经存在
-    while cmds.objExists(f"{nebulaProxyName}_proxy"):
+    while cmds.objExists("{}_proxy".format(nebulaProxyName)):
         # 如果新名称已经存在，则更改新名称
         nebulaProxyName += u"_1"
-    nebulaProxyName = f"{nebulaProxyName}_proxy"
+    nebulaProxyName = "{}_proxy".format(nebulaProxyName)
 
     # 导入 proxy 物体
     kwargs[u'type'] = u'proxy'
@@ -113,18 +113,18 @@ def vns_import_proxy(**kwargs):
 
 def vns_create_nebula_volume(**kwargs):
     nebula_name = kwargs[u'nebula_name']
-    sidx=f"{kwargs['index']:03d}"
+    sidx = "{:03d}".format(kwargs['index'])
 
-    # 创建 nebula 节点
-    nebulaGrpName = f"{nebula_name}_{sidx}"
-    nebulaVolName = f"{nebula_name}_{sidx}_vdb"
-    nebulaFogName = f"{nebula_name}_{sidx}_fog"
+# 创建 nebula 节点
+    nebulaGrpName = "{}_{}".format(nebula_name, sidx)
+    nebulaVolName = "{}_{}_vdb".format(nebula_name, sidx)
+    nebulaFogName = "{}_{}_fog".format(nebula_name, sidx)
 
     nebulaGrpTran = cmds.createNode(u'transform', n=nebulaGrpName)
     nebulaVolumeTran = cmds.createNode(u'transform', n=nebulaVolName, p=nebulaGrpTran)
-    nebulaVolumeNode = cmds.createNode(u'aiVolume', n=f"{nebulaVolName}Shape", p=nebulaVolumeTran)
+    nebulaVolumeNode = cmds.createNode(u'aiVolume', n="{}Shape".format(nebulaVolName), p=nebulaVolumeTran)
     nebulaFogTran = cmds.createNode(u'transform', n=nebulaFogName, p=nebulaGrpTran)
-    nebulaFogNode = cmds.createNode(u'aiVolume', n=f"{nebulaFogName}Shape", p=nebulaFogTran)
+    nebulaFogNode = cmds.createNode(u'aiVolume', n="{}Shape".format(nebulaFogName), p=nebulaFogTran)
 
     # 检查场景中是否存在名为 "nebula_vdb" 的显示层
     if not cmds.objExists(u"nebula_vdb"):
@@ -338,17 +338,17 @@ def vns_replace_selected_nebula(**kwargs):
 def vns_create_nebula(*args):
     info = vns_get_param_from_ctrls()
     vns_create_nebula_volume(**info)
-    print u'Create!'
+    print (u'Create!')
 
 def vns_set_ctrls_from_selected(*args):
     info = vns_get_param_from_selected()
     vns_set_param_to_ctrls(**info)
-    print u'get info from select!'
+    print (u'get info from select!')
 
 def vns_replace_selected(*args):
     info = vns_get_param_from_ctrls()
     vns_replace_selected_nebula(**info)
-    print u'Replace Selected!'
+    print (u'Replace Selected!')
 
 vns_window = cmds.window(title=u"VDB Nebula Starter")
 vns_layout = cmds.rowColumnLayout(numberOfColumns=3, columnWidth=[(1, 80), (2, 150), (3, 100)], adjustableColumn=2)
