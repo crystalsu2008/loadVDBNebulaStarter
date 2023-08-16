@@ -55,7 +55,7 @@ def vns_get_nebula_path(**kwargs):
 
     sidx="%03d" % idx
     nebuladir = "{}_{}_{}".format(name, sidx, colortype)
-    nebulaname = "{}_{}_{}_Res.{}".format(name, sidx, colortype, res, extension)
+    nebulaname = "{}_{}_{}_{}_Res.{}".format(name, sidx, colortype, res, extension)
     if typ == u'fog':
         nebuladir = "{}_{}_orange_blue".format(name, sidx)
         nebulaname = "{}_{}_orange_blue_Fog.{}".format(name, sidx, extension)
