@@ -150,7 +150,13 @@ def vns_create_nebula_volume(**kwargs):
     cmds.setAttr(nebulaVolumeNode + '.grids', "Cd density", type="string")
     # 连接材质
     shadingGroups = cmds.listConnections(kwargs['nebula_shader'], type='shadingEngine')
-    cmds.sets(nebulaVolumeNode, edit=True, forceElement=shadingGroups[0])
+    if shadingGroups:
+        # 如果材质节点已经连接到着色引擎，则使用已有的着色引擎
+        shading_group = shadingGroups[0]
+    else:
+        # 如果材质节点没有连接到着色引擎，则创建一个新的着色引擎
+        shading_group = cmds.sets(name='{}SG'.format(kwargs['nebula_shader']), renderable=True, noSurfaceShader=True, empty=True)
+    cmds.sets(nebulaVolumeNode, edit=True, forceElement=shading_group)
 
     # 设置 fog aiVolume 节点的属性
     kwargs['type'] = 'fog'
@@ -161,7 +167,13 @@ def vns_create_nebula_volume(**kwargs):
     cmds.setAttr(nebulaFogNode + '.grids', "density", type="string")
     # 连接材质
     shadingGroups = cmds.listConnections(kwargs['fog_shader'], type='shadingEngine')
-    cmds.sets(nebulaFogNode, edit=True, forceElement=shadingGroups[0])
+    if shadingGroups:
+        # 如果材质节点已经连接到着色引擎，则使用已有的着色引擎
+        shading_group = shadingGroups[0]
+    else:
+        # 如果材质节点没有连接到着色引擎，则创建一个新的着色引擎
+        shading_group = cmds.sets(name='{}SG'.format(kwargs['fog_shader']), renderable=True, noSurfaceShader=True, empty=True)
+    cmds.sets(nebulaFogNode, edit=True, forceElement=shading_group)
 
     # 导入 proxy 物体
     kwargs['nebula_grp'] = nebulaGrpTran
@@ -319,14 +331,26 @@ def vns_replace_selected_nebula(**kwargs):
     cmds.setAttr(vdb + '.filename', full_path, type="string")
     # 连接材质
     shadingGroups = cmds.listConnections(kwargs['nebula_shader'], type='shadingEngine')
-    cmds.sets(vdb, edit=True, forceElement=shadingGroups[0])
+    if shadingGroups:
+        # 如果材质节点已经连接到着色引擎，则使用已有的着色引擎
+        shading_group = shadingGroups[0]
+    else:
+        # 如果材质节点没有连接到着色引擎，则创建一个新的着色引擎
+        shading_group = cmds.sets(name='{}SG'.format(kwargs['nebula_shader']), renderable=True, noSurfaceShader=True, empty=True)
+    cmds.sets(vdb, edit=True, forceElement=shading_group)
 
     kwargs['type'] = 'fog'
     full_path = '$NEBULAPATH/'+vns_get_nebula_path(**kwargs)
     cmds.setAttr(fog + '.filename', full_path, type="string")
     # 连接材质
     shadingGroups = cmds.listConnections(kwargs['fog_shader'], type='shadingEngine')
-    cmds.sets(fog, edit=True, forceElement=shadingGroups[0])
+    if shadingGroups:
+        # 如果材质节点已经连接到着色引擎，则使用已有的着色引擎
+        shading_group = shadingGroups[0]
+    else:
+        # 如果材质节点没有连接到着色引擎，则创建一个新的着色引擎
+        shading_group = cmds.sets(name='{}SG'.format(kwargs['fog_shader']), renderable=True, noSurfaceShader=True, empty=True)
+    cmds.sets(fog, edit=True, forceElement=shading_group)
     
     # 导入 proxy 物体
     matrix = cmds.xform(proxytrans, query=True, matrix=True, worldSpace=True)
