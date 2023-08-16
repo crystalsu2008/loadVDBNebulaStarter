@@ -284,8 +284,8 @@ def vns_get_param_from_selected(*args):
     filePath = cmds.getAttr(vdb + ".filename")
     info = vns_getFileInfo(filePath)
 
-    info['nebula_shader'] = vns_getAiVolumeShader(vdb)
-    info['fog_shader'] = vns_getAiVolumeShader(fog)
+    info['nebula_shader'] = vns_getAiVolumeShader(vdbtrans)
+    info['fog_shader'] = vns_getAiVolumeShader(fogtrans)
 
     return info
 
